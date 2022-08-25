@@ -125,18 +125,17 @@ if [ "$(id -u)" == "0" ]; then
 	if [ $counter -ne 1 ]; then
 		helpPanel
 	else
+
 		if [ $function == "install" ]; then
 			sudo ssh ufw
 		elif [ $function == "verify" ]; then
-				
+			echo "v"		
 		else
 			helpPanel
 		fi
+
 	fi
 
 else
 	echo "Permiso denegado"
 fi
-	
-
-
