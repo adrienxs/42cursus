@@ -105,8 +105,8 @@ function	helpPanel()
 {
 	echo -e "Panel de Ayuda\n\n"
 	echo -e "Uso: <Nombre del Programa> -f <funcion>\n
-			-f install: Instala y configura todos los programas y servicios necesarios.\n
-			-f verify: Verifica los paquetes instalados, servicios activos y archivos de configuracion.\n"
+		-f install: Instala y configura todos los programas y servicios necesarios.\n
+		-f verify: Verifica los paquetes instalados, servicios activos y archivos de configuracion.\n"
 }
 
 # Main function
@@ -127,7 +127,9 @@ if [ "$(id -u)" == "0" ]; then
 	else
 
 		if [ $function == "install" ]; then
-			sudo ssh ufw
+			sudo
+			ssh
+			ufw
 		elif [ $function == "verify" ]; then
 			echo "v"		
 		else
