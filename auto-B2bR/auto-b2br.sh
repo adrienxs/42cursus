@@ -4,75 +4,110 @@ trap ctrl_c INT
 
 function	ctrl_c()
 {
-	echo "Saliendo"
+	echo "[!] Saliendo..."
 }
 
-function	ft_sudo()
+function	checkFile()
 {
-	test -f | dpkg -l | grep sudo > install.log
+	test -f | $arg1 | grep $arg2
+}
+
+function	verify()
+{
+	checkError="0"
+	checkFile
+	if [ $? == "0" ]; then
+		echo -e "[!] Verify'$arg2'\t\tOK!\n"
+		checkError="0"
+	else
+		echo -e "[!] Verify'$arg2'\t\tKO!\n"
+		checkError="1"
+	fi
+}
+
+function	sudo()
+{
+	
+	arg1"dpkg -l" arg2=" sudo " checkFile
 	if [ $? == "0" ]; then
 		echo -e "[!] 'sudo'\t\t\tOK!\n"
 	else
 		echo -e "[!] Instalando 'sudo'\n"
-		sleep 1
 		apt install -y sudo
+		verify
 	fi
 }
 
-
-function	ft_ssh()
+function	ssh()
 {
-	test -f | dpkg -l | grep openssh-server > install.log
+	arg1="dpkg -l" arg2=" openssh-server " checkFile
 	if [ $? == "0" ]; then
 		echo -e "[!] 'openssh-server'\t\tOK!\n"
 	else	
 		echo -e "[!] Instalando 'openssh-server'\n"
-		sleep 1
 		apt install -y openssh-server
+		verify
 	fi
+
+	#SSH-SERVER CONFIG
+	#-
 }
 
-function	ft_ufw()
+function	ufw()
 {
-	test -f | dpkg -l | grep ufw >> install.log
+	arg1="dpkg -l" arg2=" ufw " checkFile
 	if [ $? == "0" ]; then
 		echo -e "[!] 'ufw'\t\t\tOK!\n"
 	else
 		echo -e "[!] Instalando 'ufw'\n"
-		sleep 1
 		apt install -y ufw
+		verify
+	fi
+
+	#UFW CONFIG
+	arg1="ufw status" arg2="inactive" checkFile
+	if [ $? == "0" ]; then
+		ufw enable
+	else
+		echo -e "[!] 'ufw'\t\tACTIVE\n"
+	fi
 		
-		test -f | systemctl status ufw | grep "Active: inactive"
-		if [ $? == "0" ]; then
-			systemctl start ufw
-		fi
-		
-		test -f | ufw status | grep "4242"
-		if [ $? == "0"]; then
-			echo -e "[!] Puerto 4242\t\tALLOW\n"
-		else
-			ufw allow 4242
-		fi
+	arg1="ufw status" arg2="4242" checkFile	
+	if [ $? == "0"]; then
+		echo -e "[!] Puerto 4242\t\tALLOW\n"
+	else
+		ufw allow 4242
 	fi
 }
 
-function	ft_help()
+function	ft_cron()
 {
-	echo "muestra panel de ayuda"
-	echo -e "usa -f install"
+	arg1="dpkg -l" arg2=" cron " checkFile	
+	if [ $? == "0" ]; then
+		echo -e "[!] '$arg2'\t\t\tOK!\n"
+	else
+		echo -e "[!] Instalando'$arg2'\n"
+		apt install cron -y
+		verify
+	fi
+	
+	#CRON CONFIG
+	if [ $? != "0" ]; then
+		cp -b ./script/monitoring.sh /usr/local/bin/monitoring.sh
+		crontab b2br-cron
+		systemctl restart cron
+	fi
 }
 
-function	ft_install()
-{	
-	sleep 0.5
-	ft_sudo
-	sleep 0.5
-	ft_ssh
-	sleep 0.5
-	ft_ufw
+function	helpPanel()
+{
+	echo -e "Panel de Ayuda\n\n"
+	echo -e "
+			Uso: <Nombre del Programa> -f <funcion>\n
+			-f install: Instala y configura todos los programas y servicios necesarios.\n
+			-f verify: Verifica los paquetes instalados, servicios activos y archivos de configuracion.\n
+			"
 }
-
-
 
 # Main function
 
@@ -83,22 +118,24 @@ if [ "$(id -u)" == "0" ]; then
 	declare -i counter="0";
 	while getopts ":f:" arg; do
 		case $arg in
-			f) funcion=$OPTARG; let counter+=1
+			f) function=$OPTARG; let counter+=1 ;;
 		esac
 	done
 
 	if [ $counter -ne 1 ]; then
-		ft_help
+		helpPanel
 	else
-		if [ $funcion == "install" ]; then
-			ft_install
+		if [ $function == "install" ]; then
+			sudo ssh ufw cron
+		elif [ $function == "verify" ]; then
+				
 		else
-			ft_help
+			helpPanel
 		fi
 	fi
 
 else
-	echo "no soy root"
+	echo "Permiso denegado"
 fi
 	
 
