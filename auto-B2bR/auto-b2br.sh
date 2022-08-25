@@ -65,18 +65,20 @@ function	ufw()
 	fi
 
 	#UFW CONFIG
-	arg1="ufw status" arg2="inactive" checkFile
+	arg1="ufw status" arg2="active" checkFile
 	if [ $? == "0" ]; then
-		ufw enable
-	else
 		echo -e "[!] 'ufw'\t\tACTIVE\n"
+	else
+		ufw enable
+		verify
 	fi
-		
+
 	arg1="ufw status" arg2="4242" checkFile	
 	if [ $? == "0"]; then
 		echo -e "[!] Puerto 4242\t\tALLOW\n"
 	else
 		ufw allow 4242
+		verify
 	fi
 }
 
@@ -90,7 +92,7 @@ function	ft_cron()
 		apt install cron -y
 		verify
 	fi
-	
+
 	#CRON CONFIG
 	if [ $? != "0" ]; then
 		cp -b ./script/monitoring.sh /usr/local/bin/monitoring.sh
@@ -102,11 +104,9 @@ function	ft_cron()
 function	helpPanel()
 {
 	echo -e "Panel de Ayuda\n\n"
-	echo -e "
-			Uso: <Nombre del Programa> -f <funcion>\n
+	echo -e "Uso: <Nombre del Programa> -f <funcion>\n
 			-f install: Instala y configura todos los programas y servicios necesarios.\n
-			-f verify: Verifica los paquetes instalados, servicios activos y archivos de configuracion.\n
-			"
+			-f verify: Verifica los paquetes instalados, servicios activos y archivos de configuracion.\n"
 }
 
 # Main function
@@ -126,7 +126,7 @@ if [ "$(id -u)" == "0" ]; then
 		helpPanel
 	else
 		if [ $function == "install" ]; then
-			sudo ssh ufw cron
+			sudo ssh ufw
 		elif [ $function == "verify" ]; then
 				
 		else
