@@ -28,7 +28,7 @@ function	verify()
 function	sudo()
 {
 	
-	arg1"dpkg -l" arg2=" sudo " checkFile
+	arg1="dpkg -l" arg2=" sudo " checkFile
 	if [ $? == "0" ]; then
 		echo -e "[!] 'sudo'\t\t\tOK!\n"
 	else
