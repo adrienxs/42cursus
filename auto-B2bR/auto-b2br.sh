@@ -23,9 +23,7 @@ function	ft_verify()
 
 function	ft_sudo()
 {
-	arg1="dpkg -l"
-	arg2=" sudo "
-	checkFile
+	arg1="dpkg -l" arg2=" sudo " checkFile
 	if [ $? == "0" ]; then
 		echo -e "[!] 'sudo'\t\t\tOK!\n"
 	else
@@ -37,9 +35,7 @@ function	ft_sudo()
 
 function	ft_ssh()
 {	
-	arg1="dpkg -l"
-	arg2=" openssh-server "
-	checkFile	
+	arg1="dpkg -l" arg2=" openssh-server " checkFile	
 	if [ $? == "0" ]; then
 		echo -e "[!] 'openssh-server'\t\tOK!\n"
 	else	
@@ -50,25 +46,19 @@ function	ft_ssh()
 
 function	ft_ufw()
 {
-	arg1="dpkg -l"
-	arg2=" ufw "
-	checkFile	
+	arg1="dpkg -l" arg2=" ufw " checkFile	
 	if [ $? == "0" ]; then
 		echo -e "[!] 'ufw'\t\t\tOK!\n"
 	else
 		echo -e "[!] Instalando 'ufw'\n"
 		apt install -y ufw > /dev/null 2>&1
 
-		arg1="ufw status"
-		arg2="inactive"
-		checkFile
+		arg1="ufw status" arg2="inactive" checkFile
 		if [ $? == "0" ]; then
 			ufw enable
 		fi
 
-		arg1="ufw status"
-		arg2="4242"
-		checkFile
+		arg1="ufw status" arg2="4242" checkFile
 		if [ $? == "0" ]; then
 			echo -e "[!] Puerto 4242\t\tALLOW\n"
 		else
@@ -79,8 +69,6 @@ function	ft_ufw()
 
 function	ft_cron()
 {
-		pack="cron"
-		ft_bool
 		if [ $? == "0" ]; then
 			echo -e "[!] '$pack'\t\t\tOK!\n"
 		else
@@ -97,10 +85,10 @@ function	ft_cron()
 
 function	helpPanel()
 {
-	echo -e "Panel de Ayuda\n\n"
-	echo -e "Uso: <Nombre del Programa> -f <funcion>\n
-		-f install: Instala y configura todos los programas y servicios necesarios.\n
-		-f verify: Verifica los paquetes instalados, servicios activos y archivos de configuracion.\n"
+	echo -e "Panel de Ayuda\n"
+	echo -e "Uso: auto-b2br.sh -f [funcion]\n
+	-f install: Instala y configura todos los programas y servicios necesarios.\n
+	-f verify: Verifica los paquetes instalados, servicios activos y archivos de configuracion.\n"
 }
 
 function	ft_install()
