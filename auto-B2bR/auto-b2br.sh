@@ -1,5 +1,12 @@
 #!/bin/bash
 
+#Colours
+greenColor="\e[0;32m\033[1m"
+redColor="\e[0;31m\033[1m"
+blueColor="\e[0;34m\033[1m"
+yellowColor="\e[0;33m\033[1m"
+endColor="\033[0m\e[0m"
+
 trap ctrl_c INT
 
 function	ctrl_c()
@@ -14,10 +21,12 @@ function	checkFile()
 
 function	ft_verify()
 {
+	checkFile
 	if [ $? == "0" ]; then
-		echo -e "[!] Verify '$arg2'\t\tOK!\n"
+		echo -e "${greenColor}[!] Verify '$arg2'\t\tOK!${endColor}\n"
+		let c+=1
 	else
-		echo -e "[!] Verify '$arg2'\t\tKO!\n"
+		echo -e "${redColor}[!] Verify '$arg2'\t\tKO!${endColor}\n"
 	fi
 }
 
@@ -25,21 +34,23 @@ function	addUser()
 {
 	addgroup user42 > /dev/null 2>&1
 	adduser $user42 user42 > /dev/null 2>&1
-	if [ "$(test -f | cat /etc/group | grep asirvent | grep user42 | wc -l)" == "1" ]; then
-		echo -e "[!] 'user42 Group'\t\tOK!\n"
+	if [ "$(test -f | cat /etc/group | grep $user42 | grep user42 | wc -l)" == "1" ]; then
+		echo -e "${greenColor}[!] ' user42 Group '\t\tOK!${endColor}\n"
+		let c+=1
 	else
-		echo -e "[!] 'user42 Group'\t\tKO!\n"
+		echo -e "${redColor}[!] ' user42 Group '\t\tKO!${endColor}\n"
 	fi
 }
 
 
 function	ft_sudo()
 {
-	arg1="dpkg -l" arg2=" sudo " checkFile
+	arg1="dpkg -l"; arg2=" sudo "; checkFile;
 	if [ $? == "0" ]; then
-		echo -e "[!] 'sudo'\t\t\tOK!\n"
+		echo -e "${greenColor}[!] '$arg2'\t\t\tOK!${endColor}\n"
+		let c+=1
 	else
-		echo -e "[!] Instalando 'sudo'\n"
+		echo -e "${yellowColor}[!] Instalando '$arg2'${endColor}\n"
 		apt install -y sudo > /dev/null 2>&1
 	fi
 }
@@ -47,32 +58,35 @@ function	ft_sudo()
 
 function	ft_ssh()
 {	
-	arg1="dpkg -l" arg2=" openssh-server " checkFile	
+	arg1="dpkg -l"; arg2=" openssh-server "; checkFile;	
 	if [ $? == "0" ]; then
-		echo -e "[!] 'openssh-server'\t\tOK!\n"
+		echo -e "${greenColor}[!] '$arg2'\t\tOK!${endColor}\n"
+		let c+=1
 	else	
-		echo -e "[!] Instalando 'openssh-server'\n"
+		echo -e "${yellowColor}[!] Instalando '$arg2'${endColor}\n"
 		apt install -y openssh-server > /dev/null 2>&1
 	fi
 }
 
 function	ft_ufw()
 {
-	arg1="dpkg -l" arg2=" ufw " checkFile	
+	arg1="dpkg -l"; arg2=" ufw "; checkFile;	
 	if [ $? == "0" ]; then
-		echo -e "[!] 'ufw'\t\t\tOK!\n"
+		echo -e "${greenColor}[!] '$arg2'\t\t\tOK!${endColor}\n"
+		let c+=1
 	else
-		echo -e "[!] Instalando 'ufw'\n"
+		echo -e "${yellowColor}[!] Instalando '$arg2'${endColor}\n"
 		apt install -y ufw > /dev/null 2>&1
+		ft_verify
 
-		arg1="ufw status" arg2="inactive" checkFile
+		arg1="ufw status"; arg2="inactive"; checkFile;
 		if [ $? == "0" ]; then
 			ufw enable
 		fi
 
-		arg1="ufw status" arg2="4242" checkFile
+		arg1="ufw status"; arg2="4242"; checkFile;
 		if [ $? == "0" ]; then
-			echo -e "[!] Puerto 4242\t\tALLOW\n"
+			echo -e "${greenColor}[!] Puerto $arg2\t\tALLOW\n"
 		else
 			ufw allow 4242 > /dev/null
 		fi
@@ -80,18 +94,19 @@ function	ft_ufw()
 }
 
 function	ft_cron()
-{
-		if [ $? == "0" ]; then
-			echo -e "[!] '$pack'\t\t\tOK!\n"
-		else
-			echo -e "[!] Installing '$pack'\n"
-			apt install cron -y > /dev/null 2>&1
-		fi
-
-		test -f | cat /var/spool/cron/crontabs/root > /dev/null 2>&1
-		if [ $? != "0" ]; then
-			echo "***** cronpath.sh" > /var/spool/cron/crontabs/root
-		fi
+{	
+	arg1="dpkg -l"; arg2=" cron "; checkFile;
+	if [ $? == "0" ]; then
+		echo -e "${greenColor}[!] '$arg2'\t\t\tOK!${endColor}\n"
+		let c+=1
+	else
+		echo -e "${yellowColor}[!] Instalando '$arg2'${endColor}\n"
+		apt install cron -y > /dev/null 2>&1
+		#crontab b2br-cron
+		#cp -b monitoring.sh /usr/local/bin
+		#chmod 777 /usr/local/bin/monitoring.sh
+		#systemctl restart cron
+	fi
 }
 
 function	helpPanel()
@@ -104,10 +119,15 @@ function	helpPanel()
 
 function	ft_install()
 {	
+	let c="0"
 	addUser
 	ft_sudo
 	ft_ssh
 	ft_ufw
+	ft_cron
+	if [ $c == "5" ]; then
+		echo -e "${greenColor}[!] ' auto-B2bR [100%] '\tOK!${endColor}\n"
+	fi
 }
 
 # Main function
@@ -129,10 +149,10 @@ if [ "$(id -u)" == "0" ]; then
 			while [ $(cat /etc/passwd | grep $user42 | wc -l) != "1"  ]; do
 				read -p "Introduce tu nombre de usuario (grupo user42): " user42
 				if [ $(cat /etc/passwd | grep $user42 | wc -l) == "0" ]; then
-				echo -e "[!] Error: el usuario '$user42' no existe.\n"
+				echo -e "${redColor}[!] Error: el usuario '$user42' no existe.${endColor}\n"
 				fi
 			done
-		echo -e "Preparando instalación...\n"
+		echo -e "${yellowColor}Preparando instalación...${endColor}\n"
 		#apt update > /dev/null 2>&1
 		#apt upgrade -y > /dev/null 2>&1
 		ft_install
@@ -141,5 +161,5 @@ if [ "$(id -u)" == "0" ]; then
 		fi
 	fi
 else
-	echo "no soy root"
+	echo "${yellowColor}Permiso denegado."
 fi
