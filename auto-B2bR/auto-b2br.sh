@@ -21,6 +21,18 @@ function	ft_verify()
 	fi
 }
 
+function	addUser()
+{
+	addgroup user42 > /dev/null 2>&1
+	adduser $user42 user42 > /dev/null 2>&1
+	if [ "$(test -f | cat /etc/group | grep asirvent | grep user42 | wc -l)" == "1" ]; then
+		echo -e "[!] 'user42 Group'\t\tOK!\n"
+	else
+		echo -e "[!] 'user42 Group'\t\tKO!\n"
+	fi
+}
+
+
 function	ft_sudo()
 {
 	arg1="dpkg -l" arg2=" sudo " checkFile
@@ -93,6 +105,7 @@ function	helpPanel()
 
 function	ft_install()
 {	
+	addUser
 	ft_sudo
 	ft_ssh
 	ft_ufw
@@ -119,6 +132,17 @@ if [ "$(id -u)" == "0" ]; then
 		helpPanel
 	else
 		if [ $install == "install" ]; then
+			user42="0"
+			while [ $(cat /etc/passwd | grep $user42 | wc -l) != "1"  ]; do
+				read -p "Introduce tu nombre de usuario (grupo user42): " user42
+				if [ $(cat /etc/passwd | grep $user42 | wc -l) == "0" ]; then
+				echo -e "[!] Error: el usuario '$user42' no existe.\n"
+				fi
+			done
+
+			echo -e "Preparando instalación...\n"
+			#apt update > /dev/null 2>&1
+			#apt upgrade -y > /dev/null 2>&1
 			ft_install
 		else
 			helpPanel
