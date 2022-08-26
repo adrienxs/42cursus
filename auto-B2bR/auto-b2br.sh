@@ -94,7 +94,6 @@ function	ft_cron()
 		fi
 }
 
-
 function	helpPanel()
 {
 	echo -e "Panel de Ayuda\n"
@@ -111,14 +110,9 @@ function	ft_install()
 	ft_ufw
 }
 
-
-
 # Main function
-
 cat banner.txt
-
 if [ "$(id -u)" == "0" ]; then
-
 	install="0"
 	verify="0"
 	declare -i counter="0";
@@ -127,7 +121,6 @@ if [ "$(id -u)" == "0" ]; then
 			f) install=$OPTARG; let counter+=1 ;;
 		esac
 	done
-
 	if [ $counter -ne 1 ]; then
 		helpPanel
 	else
@@ -139,17 +132,14 @@ if [ "$(id -u)" == "0" ]; then
 				echo -e "[!] Error: el usuario '$user42' no existe.\n"
 				fi
 			done
-
-			echo -e "Preparando instalación...\n"
-			#apt update > /dev/null 2>&1
-			#apt upgrade -y > /dev/null 2>&1
-			ft_install
+		echo -e "Preparando instalación...\n"
+		#apt update > /dev/null 2>&1
+		#apt upgrade -y > /dev/null 2>&1
+		ft_install
 		else
 			helpPanel
 		fi
 	fi
-
-
 else
 	echo "no soy root"
 fi
