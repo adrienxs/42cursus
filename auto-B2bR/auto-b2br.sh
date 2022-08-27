@@ -7,6 +7,8 @@ blueColor="\e[0;34m\033[1m"
 yellowColor="\e[0;33m\033[1m"
 endColor="\033[0m\e[0m"
 
+export DEBIAN_FRONTEND=noninteractive
+
 trap ctrl_c INT
 
 function	ctrl_c()
@@ -100,11 +102,13 @@ function	ufw()
 		apt install -y ufw
 		
 		# Activar firewall 'ufw'
-		ufw enable
+		test -f | status ufw | grep "inactive"
+		if [ $? == "0" ]; then
+			ufw enable
+		fi
 
 		# Permitir puerto '4242'
 		ufw allow 4242
-		fi
 		((c++))
 	fi
 }
