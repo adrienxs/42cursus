@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#Colours
+# Colores
 greenColor="\e[0;32m\033[1m"
 redColor="\e[0;31m\033[1m"
 blueColor="\e[0;34m\033[1m"
@@ -14,23 +14,7 @@ function	ctrl_c()
 	echo "Saliendo"
 }
 
-# function	checkFile()
-# {
-# 	test -f | $arg2 | $arg3 | $arg4 | $arg5
-# }
-
-# function	ft_verify()
-# {
-# 	checkFile
-# 	if [ $? == "0" ]; then
-# 		echo -e "${greenColor}[!] '$id'\t\t\tOK!${endColor}\n"
-# 		((c++))
-# 	else
-# 		echo -e "${redColor}[!] '$id'\t\t\tKO!${endColor}\n"
-# 	fi
-# }
-
-function	addUser()
+function	user42()
 {
 	id="user42"
 	test -f | cat /etc/group | grep user42 | grep $user42
@@ -38,10 +22,10 @@ function	addUser()
 		echo -e "${greenColor}[!] '$id group'\t\tOK!${endColor}\n"
 		((c++))
 	else
-		echo -e "${yellowColor}Creando grupo '$id'...${endColor}\n"
+		# Crear grupo 'user42'
 		addgroup user42
 
-		echo -e "${yellowColor}Añadiendo '$user42' a '$id'${endColor}\n"
+		# Añadir usuario a 'user42'
 		adduser $user42 user42
 		((c++))
 	fi
@@ -56,20 +40,27 @@ function	sudo()
 		((c++))
 	else
 		echo -e "${yellowColor}[!] Instalando '$id'${endColor}\n"
+		# Instalar sudo
 		apt install -y sudo
+
+		# Instala 'libpam-pwquality' (strong password policy)
 		apt install -y libpam-pwquality
 
-		echo -e "${yellowColor}Configurando usuarios y grupos...${endColor}\n"
+		# Añadir usuario a 'sudo'
 		adduser $user42 sudo
 
-		echo -e "${yellowColor}Copiando archivos de configuración...${endColor}\n"
+		# Crear directorio 'sudo'
 		mkdir /var/log/sudo
+
+		# Crear archivo 'sudo.log'
 		touch /var/log/sudo/sudo.log
+
+		# Copiar archivos de configuración
 		cp -b login.defs /etc/
 		cp -b sudo_config /etc/sudoers.d/
 		cp -b common-password /etc/pam.d/common-password
 
-		echo -e "${yellowColor}Reiniciando servicio sshd...${endColor}\n"
+		# Reiniciar servicio 'sudo'
 		/etc/init.d/sudo restart
 		((c++))
 	fi
@@ -84,12 +75,13 @@ function	sshd()
 		((c++))
 	else	
 		echo -e "${yellowColor}[!] Instalando 'openssh-server'${endColor}\n"
+		# Instalar servidor ssh
 		apt install -y openssh-server
 
-		echo -e "${yellowColor}Configurando servidor ssh...${endColor}\n"
+		# Copiar archivos de configuración
 		cp -b sshd_config /etc/ssh/sshd_config
 
-		echo -e "${yellowColor}Reiniciando servicio sshd...${endColor}\n"
+		# Reiniciar servicio 'sshd'
 		/etc/init.d/sshd restart
 		((c++))
 	fi
@@ -104,9 +96,10 @@ function	ufw()
 		((c++))
 	else
 		echo -e "${yellowColor}[!] Instalando '$id'${endColor}\n"
+		# Instalar 'ufw'
 		apt install -y ufw
 
-		echo -e "${yellowColor}Habilitar firewall '$id' [y]${endColor}\n"
+		# Activar firewall 'ufw'
 		ufw enable
 
 		test -f | ufw status | grep 4242
@@ -114,6 +107,7 @@ function	ufw()
 			echo -e "${greenColor}[!] '4242' allow\t\tOK!${endColor}\n"
 		else
 			echo -e "${yellowColor}Habilitando puerto 4242...${endColor}\n"
+			# Permitir puerto '4242'
 			ufw allow 4242
 		fi
 		((c++))
@@ -123,21 +117,24 @@ function	ufw()
 function	cron()
 {	
 	id="cron"
-	test -f | dpkg -l | grep cron
+	test -f | dpkg -l | grep " cron "
 	if [ $? == "0" ]; then
 		echo -e "${greenColor}[!] '$id'\t\t\tOK!${endColor}\n"
 		((c++))
 	else
 		echo -e "${yellowColor}[!] Instalando '$id'${endColor}\n"
+		# Instalar 'cron'
 		apt install cron -y
 
-		echo -e "${yellowColor}[!] Preparando archivos de configuración...${endColor}\n"
+		# Preparar archivos de configuración
 		crontab cron_config
-		touch monitoring.sh
+
+		# Script 'monitoring.sh'
+		echo "echo crontab_OK!" > monitoring.sh
 		cp -b monitoring.sh /usr/local/bin
 		chmod 777 /usr/local/bin/monitoring.sh
 
-		echo -e "${yellowColor}[!] Reiniciando servicio '$id'...${endColor}\n"
+		# Reiniciar servicio 'cron'
 		systemctl restart cron
 		((c++))
 	fi
