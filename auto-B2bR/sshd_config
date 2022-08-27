@@ -1,3 +1,4 @@
+#AUTO-B2BR CONFIG
 Include /etc/ssh/sshd_config.d/*.conf
 Port 4242
 Protocol 2
