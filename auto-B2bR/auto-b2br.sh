@@ -102,10 +102,7 @@ function	ufw()
 		apt install -y ufw
 		
 		# Activar firewall 'ufw'
-		test -f | status ufw | grep "inactive"
-		if [ $? == "0" ]; then
-			ufw enable
-		fi
+		ufw enable
 
 		# Permitir puerto '4242'
 		ufw allow 4242
