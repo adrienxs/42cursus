@@ -17,7 +17,7 @@ function	ctrl_c()
 function	user42()
 {
 	id="user42"
-	test -f | cat /etc/group | grep user42 | grep $user42
+	test -f | cat /etc/group | grep "user42" | grep $user42
 	if [ "$?" == "0" ]; then
 		echo -e "${greenColor}[!] '$id group'\t\tOK!${endColor}\n"
 		((c++))
@@ -34,7 +34,7 @@ function	user42()
 function	sudo()
 {
 	id="sudo"
-	test -f | dpkg -l | grep sudo
+	test -f | dpkg -l | grep "sudo"
 	if [ $? == "0" ]; then
 		echo -e "${greenColor}[!] '$id'\t\t\tOK!${endColor}\n"
 		((c++))
@@ -69,7 +69,7 @@ function	sudo()
 function	sshd()
 {
 	id="ssh"
-	test -f | dpkg -l | grep openssh-server
+	test -f | dpkg -l | grep "openssh-server"
 	if [ $? == "0" ]; then
 		echo -e "${greenColor}[!] 'openssh-server'\t\tOK!${endColor}\n"
 		((c++))
@@ -90,7 +90,7 @@ function	sshd()
 function	ufw()
 {
 	id="ufw"
-	test -f | dpkg -l | grep ufw
+	test -f | dpkg -l | grep "ufw"
 	if [ $? == "0" ]; then
 		echo -e "${greenColor}[!] '$id'\t\t\tOK!${endColor}\n"
 		((c++))
@@ -102,11 +102,10 @@ function	ufw()
 		# Activar firewall 'ufw'
 		ufw enable
 
-		test -f | ufw status | grep 4242
+		test -f | ufw status | grep "active"
 		if [ $? == "0" ]; then
 			echo -e "${greenColor}[!] '4242' allow\t\tOK!${endColor}\n"
 		else
-			echo -e "${yellowColor}Habilitando puerto 4242...${endColor}\n"
 			# Permitir puerto '4242'
 			ufw allow 4242
 		fi
