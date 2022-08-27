@@ -1,0 +1,15 @@
+Include /etc/ssh/sshd_config.d/*.conf
+Port 4242
+Protocol 2
+ListenAddress 0.0.0.0
+PermitRootLogin no
+MaxAuthTries 7
+PubkeyAuthentication no
+PasswordAuthentication yes
+PermitEmptyPasswords no
+ChallengeResponseAuthentication no
+UsePAM yes
+X11Forwarding yes
+PrintMotd no
+Banner /etc/ssh/banner42
+AcceptEnv LANG LC_*
