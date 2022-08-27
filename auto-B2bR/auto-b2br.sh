@@ -98,16 +98,12 @@ function	ufw()
 		echo -e "${yellowColor}[!] Instalando '$id'${endColor}\n"
 		# Instalar 'ufw'
 		apt install -y ufw
-
+		
 		# Activar firewall 'ufw'
 		ufw enable
 
-		test -f | ufw status | grep "active"
-		if [ $? == "0" ]; then
-			echo -e "${greenColor}[!] '4242' allow\t\tOK!${endColor}\n"
-		else
-			# Permitir puerto '4242'
-			ufw allow 4242
+		# Permitir puerto '4242'
+		ufw allow 4242
 		fi
 		((c++))
 	fi
