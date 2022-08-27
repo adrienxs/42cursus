@@ -1,3 +1,4 @@
+#AUTO-B2BR CONFIG
 Defaults	passwd_tries=3
 Defaults	badpass_message="<Error_42>"
 Defaults	logfile=/var/log/sudo/sudo.log
@@ -5,5 +6,3 @@ Defaults	iolog_dir=/var/log/sudo
 Defaults	log_input, log_output
 Defaults	requiretty
 Defaults	secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
-
-asirvent ALL=(ALL) NOPASSWD: /usr/local/bin/monitoring.sh
