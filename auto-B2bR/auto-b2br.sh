@@ -30,7 +30,7 @@ function	ctrl_c()
 # 	fi
 # }
 
-function	addUser42()
+function	addUser()
 {
 	id="user42"
 	test -f | cat /etc/group | grep user42 | grep $user42 > /dev/null 2>&1
