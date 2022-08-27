@@ -1,1 +1,2 @@
-*/10 * * * * ./usr/local/bin/monitoring.sh
+#AUTO-B2BR CONFIG
+*/10 * * * * bash /usr/local/bin/monitoring.sh | wall
