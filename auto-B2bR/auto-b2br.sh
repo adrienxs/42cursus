@@ -38,96 +38,110 @@ function	addUser()
 		echo -e "${greenColor}[!] '$id group'\t\tOK!${endColor}\n"
 		((c++))
 	else
-		addgroup user42
 		echo -e "${yellowColor}Creando grupo '$id'...${endColor}\n"
-		adduser $user42 user42
+		addgroup user42 > /dev/null 2>&1
+
 		echo -e "${yellowColor}Añadiendo '$user42' a '$id'${endColor}\n"
+		adduser $user42 user42 > /dev/null 2>&1
+		((c++))
 	fi
 }
 
-function	ft_sudo()
+function	sudo()
 {
 	id="sudo"
-	test -f | dpkg -l | grep sudo
+	test -f | dpkg -l | grep sudo > /dev/null 2>&1
 	if [ $? == "0" ]; then
 		echo -e "${greenColor}[!] 'sudo'\t\t\tOK!${endColor}\n"
 		((c++))
 	else
 		echo -e "${yellowColor}[!] Instalando 'sudo'${endColor}\n"
-		apt install -y sudo
-		echo -e "${yellowColor}Añadiendo '$user42' a '$id'${endColor}\n"
-		adduser $user42 sudo
-		echo -e "${yellowColor}'$id' strong pass${endColor}\n"
-		apt install libpam-pwquality
+		apt install -y sudo > /dev/null 2>&1
+
+		echo -e "${yellowColor}Configurando usuarios y grupos...${endColor}\n"
+		adduser $user42 sudo > /dev/null 2>&1
+
+		echo -e "${yellowColor}Instalando 'pwquality'${endColor}\n"
+		apt install libpam-pwquality > /dev/null 2>&1
+
 		echo -e "${yellowColor}Copiando archivos de configuración...${endColor}\n"
-		mkdir /var/log/sudo
+		mkdir /var/log/sudo > /dev/null 2>&1
 		touch /var/log/sudo/sudo.log
-		cp -b login.defs /etc/
-		cp -b sudo_config /etc/sudoers.d/
-		cp -b common-password /etc/pam.d/common-password
+		cp -b login.defs /etc/ > /dev/null 2>&1
+		cp -b sudo_config /etc/sudoers.d/ > /dev/null 2>&1
+		cp -b common-password /etc/pam.d/common-password > /dev/null 2>&1
 
 		echo -e "${yellowColor}Reiniciando servicio sshd...${endColor}\n"
-		#/etc/init.d/sudo restart
+		/etc/init.d/sudo restart > /dev/null 2>&1
+		((c++))
 	fi
 }
 
-function	ft_ssh()
+function	sshd()
 {
 	id="ssh"
-	test -f | dpkg -l | grep openssh-server
+	test -f | dpkg -l | grep openssh-server > /dev/null 2>&1
 	if [ $? == "0" ]; then
 		echo -e "${greenColor}[!] 'openssh-server'\t\tOK!${endColor}\n"
 		((c++))
 	else	
 		echo -e "${yellowColor}[!] Instalando 'openssh-server'${endColor}\n"
-		apt install -y openssh-server
-		cp -b sshd_config /etc/ssh/sshd_config
+		apt install -y openssh-server > /dev/null 2>&1
+
+		echo -e "${yellowColor}Configurando servidor ssh...${endColor}\n"
+		cp -b sshd_config /etc/ssh/sshd_config > /dev/null 2>&1
+
 		echo -e "${yellowColor}Reiniciando servicio sshd...${endColor}\n"
-		/etc/init.d/sshd restart
+		/etc/init.d/sshd restart > /dev/null 2>&1
+		((c++))
 	fi
 }
 
-function	ft_ufw()
+function	ufw()
 {
 	id="ufw"
-	test -f | dpkg -l | grep ufw
+	test -f | dpkg -l | grep ufw > /dev/null 2>&1
 	if [ $? == "0" ]; then
-		echo -e "${greenColor}[!] 'ufw'\t\t\tOK!${endColor}\n"
+		echo -e "${greenColor}[!] '$id'\t\t\tOK!${endColor}\n"
 		((c++))
 	else
-		echo -e "${yellowColor}[!] Instalando 'ufw'${endColor}\n"
-		apt install -y ufw
+		echo -e "${yellowColor}[!] Instalando '$id'${endColor}\n"
+		apt install -y ufw > /dev/null 2>&1
 
-		test -f | status ufw | grep inactive
-		if [ $? == "1" ]; then
-			ufw enable
-		else	
-			echo -e "${greenColor}[!] 'ufw' enable\t\t\tOK!${endColor}\n"
-		fi
+		echo -e "${yellowColor}Habilitar firewall '$id' [y]${endColor}\n"
+		ufw enable > /dev/null 2>&1
 
-		test -f | ufw status | grep 4242
+		test -f | ufw status | grep 4242 > /dev/null 2>&1
 		if [ $? == "0" ]; then
 			echo -e "${greenColor}[!] '4242' allow\t\tOK!${endColor}\n"
 		else
-			ufw allow 4242
+			echo -e "${yellowColor}Habilitando puerto 4242...${endColor}\n"
+			ufw allow 4242 > /dev/null 2>&1
 		fi
+		((c++))
 	fi
 }
 
 function	ft_cron()
 {	
-	test -f | dpkg -l | grep cron
+	id="cron"
+	test -f | dpkg -l | grep cron > /dev/null 2>&1
 	if [ $? == "0" ]; then
-		echo -e "${greenColor}[!] 'cron'\t\t\tOK!${endColor}\n"
+		echo -e "${greenColor}[!] '$id'\t\t\tOK!${endColor}\n"
 		((c++))
 	else
-		echo -e "${yellowColor}[!] Instalando 'cron'${endColor}\n"
-		apt install cron -y
-		crontab cron_config
-		touch monitoring.sh
-		cp -b monitoring.sh /usr/local/bin
-		chmod 777 /usr/local/bin/monitoring.sh
+		echo -e "${yellowColor}[!] Instalando '$id'${endColor}\n"
+		apt install cron -y > /dev/null 2>&1
+
+		echo -e "${yellowColor}[!] Preparando archivos de configuración...${endColor}\n"
+		crontab cron_config > /dev/null 2>&1
+		touch monitoring.sh > /dev/null 2>&1
+		cp -b monitoring.sh /usr/local/bin > /dev/null 2>&1
+		chmod 777 /usr/local/bin/monitoring.sh > /dev/null 2>&1
+
+		echo -e "${yellowColor}[!] Reiniciando servicio '$id'...${endColor}\n"
 		systemctl restart cron
+		((c++))
 	fi
 }
 
@@ -142,13 +156,11 @@ function	helpPanel()
 function	ft_install()
 {	
 	let c="0"
-	#apt install man  > /dev/null 2>&1
-	#apt install vim  > /dev/null 2>&1
 	addUser
-	ft_sudo
-	ft_ssh
-	ft_ufw
-	ft_cron
+	sudo
+	ssh
+	ufw
+	cron
 	if [ $c == "5" ]; then
 		echo -e "${yellowColor}Instalacion completada${endColor}\n"
 	fi
