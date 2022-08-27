@@ -120,7 +120,7 @@ function	ufw()
 	fi
 }
 
-function	ft_cron()
+function	cron()
 {	
 	id="cron"
 	test -f | dpkg -l | grep cron
@@ -187,8 +187,8 @@ if [ "$(id -u)" == "0" ]; then
 				fi
 			done
 		echo -e "${yellowColor}Preparando instalación...${endColor}\n"
-		#apt update > /dev/null 2>&1
-		#apt upgrade -y > /dev/null 2>&1
+		apt update
+		apt upgrade -y
 		ft_install
 		else
 			helpPanel
