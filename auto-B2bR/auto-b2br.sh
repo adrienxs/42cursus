@@ -89,13 +89,13 @@ function	ft_ufw()
 		apt install -y ufw > /dev/null 2>&1
 	fi
 	# Activar firewall 'ufw'
-	test -f | status ufw | grep -w "active" > /dev/null 2>&1
+	test -f | ufw status | grep -w "active" > /dev/null 2>&1
 	if [ $? == "0" ]; then
 	# Permitir puerto '4242'
 	ufw allow 4242 > /dev/null 2>&1
 	else
 	# Habilitar 'ufw'
-	echo -e "${blueColor}[?] Activar firewall '$id' y terminar con la instalación [Y/n]: ${endColor}\n"
+	echo -e "${yellowColor}[?] Activar firewall '$id' y terminar con la instalación [Y/n]: ${endColor}\n"
 	ufw enable > /dev/null 2>&1
 	fi
 	((c++))
