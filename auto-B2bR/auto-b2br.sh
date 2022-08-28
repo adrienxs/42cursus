@@ -16,124 +16,111 @@ function	ctrl_c()
 	echo "Saliendo"
 }
 
-function	user42()
+function	ft_user42()
 {
 	id="user42"
 	test -f | cat /etc/group | grep "user42" | grep $user42
 	if [ "$?" == "0" ]; then
 		echo -e "${greenColor}[!] '$id group'\t\tOK!${endColor}\n"
-		((c++))
 	else
 		# Crear grupo 'user42'
 		addgroup user42
-
 		# Añadir usuario a 'user42'
 		adduser $user42 user42
-		((c++))
 	fi
+	((c++))
 }
 
-function	sudo()
+function	ft_sudo()
 {
 	id="sudo"
 	test -f | dpkg -l | grep "sudo"
 	if [ $? == "0" ]; then
 		echo -e "${greenColor}[!] '$id'\t\t\tOK!${endColor}\n"
-		((c++))
 	else
 		echo -e "${yellowColor}[!] Instalando '$id'${endColor}\n"
 		# Instalar sudo
 		apt install -y sudo
-
-		# Instala 'libpam-pwquality' (strong password policy)
-		apt install -y libpam-pwquality
-
-		# Añadir usuario a 'sudo'
-		adduser $user42 sudo
-
-		# Crear directorio 'sudo'
-		mkdir /var/log/sudo
-
-		# Crear archivo 'sudo.log'
-		touch /var/log/sudo/sudo.log
-
-		# Copiar archivos de configuración
-		cp -b login.defs /etc/
-		cp -b sudo_config /etc/sudoers.d/
-		cp -b common-password /etc/pam.d/common-password
-
-		# Reiniciar servicio 'sudo'
-		/etc/init.d/sudo restart
-		((c++))
-	fi
+	fi	
+	# Instala 'libpam-pwquality' (strong password policy)
+	apt install -y libpam-pwquality
+	# Añadir usuario a 'sudo'
+	adduser $user42 sudo
+	# Crear directorio 'sudo'
+	mkdir /var/log/sudo
+	# Crear archivo 'sudo.log'
+	touch /var/log/sudo/sudo.log
+	# Copiar archivos de configuración
+	cp -b login.defs /etc/
+	cp -b sudo_config /etc/sudoers.d/
+	cp -b common-password /etc/pam.d/common-password
+	# Reiniciar servicio 'sudo'
+	/etc/init.d/sudo restart
+	((c++))
 }
 
-function	sshd()
+function	ft_sshd()
 {
-	id="ssh"
+	id="sshd"
 	test -f | dpkg -l | grep "openssh-server"
 	if [ $? == "0" ]; then
-		echo -e "${greenColor}[!] 'openssh-server'\t\tOK!${endColor}\n"
-		((c++))
+		echo -e "${greenColor}[!] '$id'\t\t\tOK!${endColor}\n"
 	else	
-		echo -e "${yellowColor}[!] Instalando 'openssh-server'${endColor}\n"
+		echo -e "${yellowColor}[!] Instalando '$id'${endColor}\n"
 		# Instalar servidor ssh
 		apt install -y openssh-server
-
-		# Copiar archivos de configuración
-		cp -b sshd_config /etc/ssh/sshd_config
-
-		# Reiniciar servicio 'sshd'
-		/etc/init.d/sshd restart
-		((c++))
-	fi
+	fi	
+	# Copiar archivos de configuración
+	cp -b sshd_config /etc/ssh/sshd_config
+	# Reiniciar servicio 'sshd'
+	/etc/init.d/sshd restart
+	((c++))
 }
 
-function	ufw()
+function	ft_ufw()
 {
 	id="ufw"
 	test -f | dpkg -l | grep "ufw"
 	if [ $? == "0" ]; then
 		echo -e "${greenColor}[!] '$id'\t\t\tOK!${endColor}\n"
-		((c++))
 	else
 		echo -e "${yellowColor}[!] Instalando '$id'${endColor}\n"
 		# Instalar 'ufw'
 		apt install -y ufw
-		
-		# Activar firewall 'ufw'
-		ufw enable
-
-		# Permitir puerto '4242'
-		ufw allow 4242
-		((c++))
 	fi
+	# Activar firewall 'ufw'
+	test -f | status ufw | grep -w "active"
+	if [ $? == "0" ]; then
+	# Permitir puerto '4242'
+	ufw allow 4242	
+	else
+	# Habilitar 'ufw'
+	ufw enable
+	fi
+	((c++))
 }
 
-function	cron()
+function	ft_cron()
 {	
 	id="cron"
 	test -f | dpkg -l | grep " cron "
 	if [ $? == "0" ]; then
 		echo -e "${greenColor}[!] '$id'\t\t\tOK!${endColor}\n"
-		((c++))
 	else
 		echo -e "${yellowColor}[!] Instalando '$id'${endColor}\n"
 		# Instalar 'cron'
 		apt install cron -y
-
-		# Preparar archivos de configuración
-		crontab cron_config
-
-		# Script 'monitoring.sh'
-		echo "echo crontab_OK!" > monitoring.sh
-		cp -b monitoring.sh /usr/local/bin
-		chmod 777 /usr/local/bin/monitoring.sh
-
-		# Reiniciar servicio 'cron'
-		systemctl restart cron
-		((c++))
 	fi
+	# Preparar archivos de configuración
+	crontab cron_config
+	# Script 'monitoring.sh'
+	echo "echo crontab_OK!" > monitoring.sh
+	cp -b monitoring.sh /usr/local/bin
+	chmod 777 /usr/local/bin/monitoring.sh
+	# Reiniciar servicio 'cron'
+	systemctl restart cron
+	fi
+	((c++))
 }
 
 function	helpPanel()
@@ -147,11 +134,11 @@ function	helpPanel()
 function	ft_install()
 {	
 	let c="0"
-	addUser
-	sudo
-	sshd
-	ufw
-	cron
+	ft_user42
+	ft_sudo
+	ft_sshd
+	ft_ufw
+	ft_cron
 	if [ $c == "5" ]; then
 		echo -e "${yellowColor}Instalacion completada${endColor}\n"
 	fi
