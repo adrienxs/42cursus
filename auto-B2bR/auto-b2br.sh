@@ -119,7 +119,6 @@ function	ft_cron()
 	chmod 777 /usr/local/bin/monitoring.sh
 	# Reiniciar servicio 'cron'
 	systemctl restart cron
-	fi
 	((c++))
 }
 
