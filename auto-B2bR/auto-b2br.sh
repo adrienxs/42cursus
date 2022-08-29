@@ -13,7 +13,7 @@ trap ctrl_c INT
 
 function	ctrl_c()
 {
-	echo "Saliendo"
+	echo "Saliendo..."
 }
 
 function	ft_user42()
@@ -87,16 +87,13 @@ function	ft_ufw()
 		echo -e "${yellowColor}[!] Instalando '$id'${endColor}\n"
 		# Instalar 'ufw'
 		apt install -y ufw > /dev/null 2>&1
+		# Activar 'ufw'
+		ufw enable > /dev/null 2>&1
 	fi
-	# Activar firewall 'ufw'
-	test -f | ufw status | grep -w "active" > /dev/null 2>&1
-	if [ $? == "0" ]; then
+	test -f | ufw status | grep "4242" > /dev/null 2>&1
+	if [ $? == "1" ]; then
 	# Permitir puerto '4242'
 	ufw allow 4242 > /dev/null 2>&1
-	else
-	# Habilitar 'ufw'
-	echo -e "${yellowColor}[?] Activar firewall '$id' y terminar con la instalación [Y/n]: ${endColor}\n"
-	ufw enable > /dev/null 2>&1
 	fi
 	((c++))
 }
