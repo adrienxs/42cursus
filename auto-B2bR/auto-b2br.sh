@@ -1,27 +1,27 @@
 #!/bin/bash
 
 # Colores
-greenColor="\e[0;32m\033[1m"
-redColor="\e[0;31m\033[1m"
-blueColor="\e[0;34m\033[1m"
-yellowColor="\e[0;33m\033[1m"
+GREEN="\e[0;32m\033[1m"
+RED="\e[0;31m\033[1m"
+BLUE="\e[0;34m\033[1m"
+YELLOW="\e[0;33m\033[1m"
+CYAN="\e[0;36m\033[1m"
 endColor="\033[0m\e[0m"
 
 export DEBIAN_FRONTEND=noninteractive
 
-trap ctrl_c INT
-
-function	ctrl_c()
+function	ft_update()
 {
-	echo "Saliendo..."
+	apt update > /dev/null 2>&1
+	apt upgrade -y > /dev/null 2>&1
 }
 
 function	ft_user42()
 {
 	id="user42"
-	test -f | cat /etc/group | grep "user42" | grep $user42 > /dev/null 2>&1
+	test -f | cat /etc/group | grep "user42"| grep $user42 > /dev/null 2>&1
 	if [ "$?" == "0" ]; then
-		echo -e "${greenColor}[!] '$id group'\t\tOK!${endColor}\n"
+		echo -e "${GREEN}[!] '$id group'\t\tOK!${endColor}\n"
 	else
 		# Crear grupo 'user42'
 		addgroup user42 > /dev/null 2>&1
@@ -36,9 +36,9 @@ function	ft_sudo()
 	id="sudo"
 	test -f | dpkg -l | grep "sudo" > /dev/null 2>&1
 	if [ $? == "0" ]; then
-		echo -e "${greenColor}[!] '$id'\t\t\tOK!${endColor}\n"
+		echo -e "${GREEN}[!] '$id'\t\t\tOK!${endColor}\n"
 	else
-		echo -e "${yellowColor}[!] Instalando '$id'${endColor}\n"
+		echo -e "${YELLOW}[!] Instalando '$id'${endColor}\n"
 		# Instalar sudo
 		apt install -y sudo > /dev/null 2>&1
 	fi	
@@ -64,9 +64,9 @@ function	ft_sshd()
 	id="sshd"
 	test -f | dpkg -l | grep "openssh-server" > /dev/null 2>&1
 	if [ $? == "0" ]; then
-		echo -e "${greenColor}[!] '$id'\t\t\tOK!${endColor}\n"
+		echo -e "${GREEN}[!] '$id'\t\t\tOK!${endColor}\n"
 	else	
-		echo -e "${yellowColor}[!] Instalando '$id'${endColor}\n"
+		echo -e "${YELLOW}[!] Instalando '$id'${endColor}\n"
 		# Instalar servidor ssh
 		apt install -y openssh-server > /dev/null 2>&1
 	fi	
@@ -82,9 +82,9 @@ function	ft_ufw()
 	id="ufw"
 	test -f | dpkg -l | grep "ufw" > /dev/null 2>&1
 	if [ $? == "0" ]; then
-		echo -e "${greenColor}[!] '$id'\t\t\tOK!${endColor}\n"
+		echo -e "${GREEN}[!] '$id'\t\t\tOK!${endColor}\n"
 	else
-		echo -e "${yellowColor}[!] Instalando '$id'${endColor}\n"
+		echo -e "${YELLOW}[!] Instalando '$id'${endColor}\n"
 		# Instalar 'ufw'
 		apt install -y ufw > /dev/null 2>&1
 		# Activar 'ufw'
@@ -103,9 +103,9 @@ function	ft_cron()
 	id="cron"
 	test -f | dpkg -l | grep " cron " > /dev/null 2>&1
 	if [ $? == "0" ]; then
-		echo -e "${greenColor}[!] '$id'\t\t\tOK!${endColor}\n"
+		echo -e "${GREEN}[!] '$id'\t\t\tOK!${endColor}\n"
 	else
-		echo -e "${yellowColor}[!] Instalando '$id'${endColor}\n"
+		echo -e "${YELLOW}[!] Instalando '$id'${endColor}\n"
 		# Instalar 'cron'
 		apt install cron -y > /dev/null 2>&1
 	fi
@@ -122,10 +122,8 @@ function	ft_cron()
 
 function	helpPanel()
 {
-	echo -e "Panel de Ayuda\n"
-	echo -e "Uso: auto-b2br.sh -f [funcion]\n
-	-f install: Instala y configura todos los programas y servicios necesarios.\n
-	-f verify: Verifica los paquetes instalados, servicios activos y archivos de configuracion.\n"
+	echo -e "${CYAN}# Creado por asirvent y supervisado por cpeset-c.${endColor}"
+	echo -e "${YELLOW}# Instrucciones: \"auto-b2br.sh -i\" para iniciar la instalación.${endColor}\n"
 }
 
 function	ft_install()
@@ -137,40 +135,31 @@ function	ft_install()
 	ft_cron
 	ft_ufw
 	if [ $c == "5" ]; then
-		echo -e "${yellowColor}Instalacion completada${endColor}\n"
+		echo -e "${YELLOW}Instalacion completada${endColor}\n"
 	fi
 }
 
 # Main function
 cat banner.txt
 if [ "$(id -u)" == "0" ]; then
-	install="0"
-	verify="0"
 	declare -i counter="0";
-	while getopts ":f:" arg; do
-		case $arg in
-			f) install=$OPTARG; let counter+=1 ;;
-		esac
-	done
-	if [ $counter -ne 1 ]; then
+	if [ -z "$1" ]; then
 		helpPanel
 	else
-		if [ $install == "install" ]; then
+		if [ $1 == "-i" ]; then
 			user42="0"
 			while [ $(cat /etc/passwd | grep $user42 | wc -l) != "1"  ]; do
 				read -p "Introduce tu nombre de usuario (grupo user42): " user42
 				if [ $(cat /etc/passwd | grep $user42 | wc -l) == "0" ]; then
-				echo -e "${redColor}[!] Error: el usuario '$user42' no existe.${endColor}\n"
+				echo -e "${RED}[!] Error: el usuario '$user42' no existe.${endColor}\n"
 				fi
 			done
-		echo -e "${yellowColor}Preparando instalación...${endColor}\n"
-		apt update
-		apt upgrade -y
+		echo -e "${YELLOW}Preparando instalación...${endColor}\n"
 		ft_install
 		else
 			helpPanel
 		fi
 	fi
 else
-	echo "${yellowColor}Permiso denegado."
+	echo "${RED}Permiso denegado.${endColor}"
 fi
