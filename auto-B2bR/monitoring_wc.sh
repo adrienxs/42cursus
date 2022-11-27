@@ -54,7 +54,7 @@ sudo="$(cat /var/log/sudo/sudo.log | grep "COMMAND" | wc -l)"
 #main script
 figlet -c 42Monitoring
 
-wall	"\n${CYAN}Architecture:${endColor} ${kernel} ${OS} ${Architecture}
+echo -e	"\n${CYAN}Architecture:${endColor} ${kernel} ${OS} ${Architecture}
 ${CYAN}CPU:${endColor} ${CPU_physical}
 ${CYAN}vCPU:${endColor} ${CPU_virtual}
 ${CYAN}Memory Usage:${endColor} ${Memory_usage}
