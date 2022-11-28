@@ -59,7 +59,8 @@ ${CYAN}CPU:${endColor} ${CPU_physical}
 ${CYAN}vCPU:${endColor} ${CPU_virtual}
 ${CYAN}Memory Usage:${endColor} ${Memory_usage}
 ${CYAN}Disk Usage:${endColor} ${Disk_usage}
-${CYAN}CPU Load:${endColor} ${Last_boot}
+${CYAN}Last Boot:${endColor} ${Last_boot}
+${CYAN}CPU Load:${endColor} ${CPU_load}
 ${CYAN}LVM:${endColor} ${LVM}
 ${CYAN}Connexions TCP:${endColor} ${TCP_connexions}
 ${CYAN}User Log:${endColor} ${User_log}
