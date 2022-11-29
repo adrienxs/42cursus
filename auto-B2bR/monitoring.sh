@@ -49,7 +49,8 @@ CPU: ${CPU_physical}
 vCPU: ${CPU_virtual}
 Memory Usage: ${Memory_usage}
 Disk Usage: ${Disk_usage}
-CPU Load: ${Last_boot}
+Last Boot: ${Last_boot}
+CPU Load: ${CPU_load}
 LVM: ${LVM}
 Connexions TCP: ${TCP_connexions}
 User Log: ${User_log}
